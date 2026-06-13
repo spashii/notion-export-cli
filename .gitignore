@@ -1,0 +1,11 @@
+.DS_Store
+bin/
+dist/
+notion-out/
+notion-profile-out/
+notion-*-out/
+*.notion-export/
+.env
+.env.*
+coverage.out
+*.test
