@@ -1,0 +1,18 @@
+{
+  "name": "notion-export-cli",
+  "short_name": "notion-export-cli",
+  "description": "Local-first Notion exporter.",
+  "background_color": "#ffffff",
+  "theme_color": "#000000",
+  "readme_site": {
+    "fg": "#000000",
+    "line": "rgba(0, 0, 0, 0.7)",
+    "accent": "#000000",
+    "dark": {
+      "bg": "#000000",
+      "fg": "#ffffff",
+      "line": "rgba(255, 255, 255, 0.7)",
+      "accent": "#ffffff"
+    }
+  }
+}
