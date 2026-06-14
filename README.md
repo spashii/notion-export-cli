@@ -2,7 +2,7 @@
 
 Local-first Notion exporter.
 
-Site: https://spashii.github.io/notion-export-cli/
+Site: https://notion-export-cli.tangerinetech.eu/
 
 ## Build
 

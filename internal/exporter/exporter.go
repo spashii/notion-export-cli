@@ -29,6 +29,7 @@ type Exporter struct {
 	visitedDatabase map[string]string
 	visitedSources  map[string]string
 	usedNames       map[string]map[string]int
+	assets          *assetManager
 }
 
 func New(cfg Config) *Exporter {
@@ -36,7 +37,7 @@ func New(cfg Config) *Exporter {
 	if writer == nil {
 		writer = io.Discard
 	}
-	return &Exporter{
+	exporter := &Exporter{
 		client:          cfg.Client,
 		outputDir:       filepath.Clean(cfg.OutputDir),
 		writer:          writer,
@@ -46,6 +47,8 @@ func New(cfg Config) *Exporter {
 		visitedSources:  map[string]string{},
 		usedNames:       map[string]map[string]int{},
 	}
+	exporter.assets = newAssetManager(exporter.outputDir, &exporter.coverage)
+	return exporter
 }
 
 func (e *Exporter) ExportRoot(ctx context.Context, input string) error {
@@ -209,6 +212,7 @@ func (e *Exporter) exportPage(ctx context.Context, page *notion.Page, parentDir,
 		}
 	}
 
+	content = e.assets.rewriteAndFetch(ctx, markdownPath, content)
 	if err := writeFile(markdownPath, []byte(renderPageMarkdown(page, title, content))); err != nil {
 		return "", err
 	}
@@ -449,11 +453,20 @@ func (e *Exporter) pageMarkdownWithRecoveredUnknowns(ctx context.Context, pageID
 }
 
 func (e *Exporter) prepare() error {
-	return os.MkdirAll(e.outputDir, 0o755)
+	if err := os.MkdirAll(e.outputDir, 0o755); err != nil {
+		return err
+	}
+	if err := e.assets.load(); err != nil {
+		e.recordFailure("load_asset_index", "", err)
+	}
+	return nil
 }
 
 func (e *Exporter) finish() error {
 	e.manifest.FinishedAt = time.Now().UTC()
+	if err := e.assets.writeIndex(); err != nil {
+		return err
+	}
 	if err := writeJSON(filepath.Join(e.outputDir, "_manifest.json"), e.manifest); err != nil {
 		return err
 	}

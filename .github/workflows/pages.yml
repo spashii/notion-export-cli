@@ -20,7 +20,8 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: oven-sh/setup-bun@v2
-      - run: bunx github:spashii/folder2website#main . --out site --base-url https://spashii.github.io/notion-export-cli
+      - run: bunx github:spashii/folder2website#main . --out site --base-url https://notion-export-cli.tangerinetech.eu
+      - run: printf 'notion-export-cli.tangerinetech.eu\n' > site/CNAME
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:
